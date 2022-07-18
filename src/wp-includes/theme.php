@@ -2819,6 +2819,8 @@ function add_theme_support( $feature, ...$args ) {
 			}
 	}
 
+	$args = apply_filters( 'add_theme_support_feature_args', $args, $feature );
+
 	$_wp_theme_features[ $feature ] = $args;
 }
 
