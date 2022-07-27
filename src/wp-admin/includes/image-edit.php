@@ -1100,18 +1100,15 @@ function wp_save_image( $post_id ) {
 				continue;
 			}
 
+			$img->set_output_mime_type( $targeted_mime );
+
 			if ( 'thumbnail' === $target ) {
 				if ( ! isset( $subsized_images[ $post->post_mime_type ]['thumbnail']['file'] ) ) {
 					continue;
 				}
 
-				$thumbnail_file    = $subsized_images[ $post->post_mime_type ]['thumbnail']['file'];
-				$current_extension = pathinfo( $thumbnail_file, PATHINFO_EXTENSION );
-
-				// Create a file with then new extension out of the targeted file.
-				$target_file_name     = preg_replace( "/\.$current_extension$/", ".$extension", $thumbnail_file );
-				$target_file_location = path_join( $original_directory, $target_file_name );
-				$result               = $img->save( $target_file_location, $targeted_mime );
+				$thumbnail_file = $subsized_images[ $post->post_mime_type ]['thumbnail']['file'];
+				$result         = $img->save( $img->generate_filename( null, $thumbnail_file, $extension ) );
 
 				if ( is_wp_error( $result ) ) {
 					continue;
@@ -1119,8 +1116,7 @@ function wp_save_image( $post_id ) {
 
 				$subsized_images[ $targeted_mime ] = array( 'thumbnail' => $result );
 			} else {
-				$destination = trailingslashit( $original_directory ) . "{$filename}.{$extension}";
-				$result      = $img->save( $destination, $targeted_mime );
+				$result = $img->save( $img->generate_filename( null, $filename, $extension ) );
 
 				if ( is_wp_error( $result ) ) {
 					continue;
